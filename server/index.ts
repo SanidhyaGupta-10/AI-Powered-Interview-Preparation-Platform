@@ -1,11 +1,16 @@
 import app from "./src/app";
 import "dotenv/config";
 import connectDB from "./src/config/db";
-import main from "./src/services/ai.service";
+import { generateInterviewReport } from "./src/services/ai.service";
+import { resume, selfDescription, jobDescription } from "./src/services/temp";
 
 const PORT = process.env.PORT! || 3000;
 
-main()
+generateInterviewReport({
+    resume,
+    selfDescription,
+    jobDescription,
+})
 
 app.listen(PORT, async () => {
     await connectDB();
