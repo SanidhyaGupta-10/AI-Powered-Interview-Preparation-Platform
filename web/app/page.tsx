@@ -1,11 +1,10 @@
 import ProtectedRoute from "./components/ProtectedRoute";
+import Home from "./interview/pages/Home";
 
 function Page() {
   return (
     <ProtectedRoute>
-      <div className="flex items-center justify-center min-h-screen">
-          <h1 className="text-white text-4xl font-bold">Gen AI + Full Stack</h1>
-      </div>
+      <Home />
     </ProtectedRoute>
   )
 }
