@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
 import { SectionId, TechnicalQuestion, BehavioralQuestion } from "@/types/interview";
 import { useInterviewReport } from "@/hooks/useInterviewReport";
+import { Download } from "lucide-react";
 
 import GlassCard from "@/components/interview-report/GlassCard";
 import SkeletonBlock from "@/components/interview-report/SkeletonBlock";
@@ -27,6 +28,21 @@ export default function InterviewReportPage() {
         { id: "behavioral", label: "Behavioural Questions", emoji: "🧠" },
         { id: "roadmap", label: "Roadmap", emoji: "🗺️" },
     ];
+
+    const handleDownloadPdf = async () => {
+        // Here you can add your API call to generate the PDF
+        // Example:
+        // const response = await axios.get(`/interview/report/${id}/pdf`, { responseType: 'blob' });
+        // const url = window.URL.createObjectURL(new Blob([response.data]));
+        // const link = document.createElement('a');
+        // link.href = url;
+        // link.setAttribute('download', `interview-${id}.pdf`);
+        // document.body.appendChild(link);
+        // link.click();
+
+        // For simple, working code without errors right now, use browser's native print to PDF:
+        window.print();
+    };
 
     if (loading) {
         return (
@@ -137,6 +153,19 @@ export default function InterviewReportPage() {
         ══════════════════════════════════════════════════ */}
                 <StatsPanel report={report} />
             </motion.div>
+
+            {/* ── Download PDF Button (Floats when ready) ── */}
+            <motion.button
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ delay: 0.8, type: "spring", stiffness: 200, damping: 20 }}
+                onClick={handleDownloadPdf}
+                className="fixed bottom-8 right-8 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-5 py-3 rounded-full shadow-lg shadow-blue-500/25 border border-white/10 backdrop-blur-md transition-all sm:bottom-10 sm:right-10 print:hidden font-medium cursor-pointer"
+            >
+                <Download size={20} />
+                <span>Download PDF</span>
+            </motion.button>
         </main>
     );
 }
+

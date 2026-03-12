@@ -16,11 +16,18 @@ export const registerUser = async (req: Request, res: Response) => {
         // Check if user already exists
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ error: "User already exists" });
+            return res.status(409).json({ error: "User already exists" });
         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Ensure the old 'name' unique index is dropped so users can share names
+        try {
+            await User.collection.dropIndex("name_1");
+        } catch (e) {
+            // Ignore if index doesn't exist
+        }
 
         // Create user
         const user = await User.create({ name, email, password: hashedPassword });
