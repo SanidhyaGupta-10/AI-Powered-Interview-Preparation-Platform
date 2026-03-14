@@ -33,9 +33,14 @@ export const registerUser = async (req: Request, res: Response) => {
         const user = await User.create({ name, email, password: hashedPassword });
 
         // Generate token
+        if (!process.env.JWT_SECRET) {
+            console.error("[Auth] FATAL: JWT_SECRET is not defined");
+            return res.status(500).json({ error: "Internal server configuration error" });
+        }
+
         const token = jwt.sign(
             { id: user._id },
-            process.env.JWT_SECRET!,
+            process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
 
@@ -66,7 +71,12 @@ export const loginUser = async (req: Request, res: Response) => {
         }
 
         // Generate token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: "1h" });
+        if (!process.env.JWT_SECRET) {
+            console.error("[Auth] FATAL: JWT_SECRET is not defined");
+            return res.status(500).json({ error: "Internal server configuration error" });
+        }
+        
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         // Set cookie
         res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "strict", maxAge: 3600000 });
@@ -94,12 +104,20 @@ export const logoutUser = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
     try {
-        const user = await User.findById((req as any).user?.id);
+        const userId = (req as any).user?.id;
+        if (!userId) {
+            console.error("[Auth] getMe called but no user ID found in request object");
+            return res.status(401).json({ error: "User context missing" });
+        }
+
+        const user = await User.findById(userId);
         if (!user) {
+            console.warn(`[Auth] User with ID ${userId} not found in database`);
             return res.status(404).json({ error: "User not found" });
         }
         res.status(200).json(user);
     } catch (error: any) {
-        res.status(500).json({ error: error?.message });
+        console.error("[Auth] Error in getMe controller:", error);
+        res.status(500).json({ error: error?.message || "Internal Server Error" });
     }
 };

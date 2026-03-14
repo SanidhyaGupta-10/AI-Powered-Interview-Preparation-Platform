@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import { InterviewReportSchema, type InterviewReport } from "../zod/InterviewReport.schema";
 import type { InterviewInput } from "../types/types";
 
@@ -12,10 +12,7 @@ const ai = new OpenAI({
   baseURL: "https://api.groq.com/openai/v1",
 });
 
-// ─── Puppeteer — point at the user's local Chrome ────────────────────────────
-const CHROME_PATH =
-  process.env.CHROME_PATH ||
-  "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+// ─── Puppeteer ──────────────────────────────────────────────────────────────
 
 
 // ─── Generate Interview Report ────────────────────────────────────────────────
@@ -187,10 +184,9 @@ export async function generateResumePdf({
     const { html } = ResumePdfSchema.parse(parsed);
     console.log("[AI] HTML generated successfully. Length:", html.length);
 
-    // ── Render HTML → PDF buffer via Puppeteer-core ──────────────────────────
-    console.log("[Puppeteer] Launching browser at:", CHROME_PATH);
+    // ── Render HTML → PDF buffer via Puppeteer ───────────────────────────────
+    console.log("[Puppeteer] Launching browser...");
     const browser = await puppeteer.launch({
-      executablePath: CHROME_PATH,
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
     });

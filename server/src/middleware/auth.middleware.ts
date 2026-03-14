@@ -15,14 +15,31 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         if (isBlacklisted) {
             return res.status(401).json({ error: "Unauthorized" });
         }
+        if (!process.env.JWT_SECRET) {
+            console.error("[Auth] FATAL: JWT_SECRET is not defined in environment variables");
+            return res.status(500).json({ error: "Server configuration error" });
+        }
+
         // Verify token
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
+        let decodedToken;
+        try {
+            decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (verifyError: any) {
+            console.warn(`[Auth] Token verification failed: ${verifyError.message}`);
+            return res.status(401).json({ error: "Invalid or expired token" });
+        }
+
         // Attach user to request
+        if (typeof decodedToken !== "object" || !decodedToken) {
+            return res.status(401).json({ error: "Invalid token payload" });
+        }
+        
         (req as any).user = decodedToken;
 
         // Call next middleware
         next();
     } catch (error: any) {
-        res.status(500).json({ error: error?.message });
+        console.error("[Auth] Unexpected error in auth middleware:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 };

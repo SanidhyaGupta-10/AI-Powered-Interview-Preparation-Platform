@@ -24,5 +24,13 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/interview", interviewRouter)
 
+// Global Error Handler
+app.use((err: any, req: Request, res: Response, next: any) => {
+    console.error(`[Server Error] ${req.method} ${req.path}:`, err);
+    res.status(500).json({
+        error: err.message || "Internal Server Error",
+        stack: process.env.NODE_ENV === "development" ? err.stack : undefined
+    });
+});
 
 export default app;

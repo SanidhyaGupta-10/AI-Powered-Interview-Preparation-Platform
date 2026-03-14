@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-  "dev": "bun --watch index.ts",
-  "start": "bun index.ts"
-},
+    "dev": "bun --watch index.ts",
+    "start": "bun index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/express": "^5.0.6",
@@ -30,7 +30,6 @@
     "multer": "^2.1.1",
     "openai": "^6.27.0",
     "pdf-parse": "^2.4.5",
-    "puppeteer-core": "^24.38.0",
     "zod": "^4.3.6",
     "zod-to-json-schema": "^3.25.1"
   }
