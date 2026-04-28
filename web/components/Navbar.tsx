@@ -30,21 +30,21 @@ export default function Navbar() {
               <>
                 <Link 
                   href="/" 
-                  className="hidden md:flex items-center gap-2 text-sm font-medium text-white/60 hover:text-white transition-colors"
+                  className="flex items-center gap-2 text-sm font-medium text-white/60 hover:text-white transition-colors"
                 >
                   <LayoutDashboard size={16} />
-                  Dashboard
+                  <span className="hidden sm:inline">Dashboard</span>
                 </Link>
 
                 <Link 
                   href="/history" 
-                  className="hidden md:flex items-center gap-2 text-sm font-medium text-white/60 hover:text-white transition-colors"
+                  className="flex items-center gap-2 text-sm font-medium text-white/60 hover:text-white transition-colors"
                 >
                   <History size={16} />
-                  History
+                  <span className="hidden sm:inline">History</span>
                 </Link>
 
-                <div className="h-4 w-px bg-white/10 hidden md:block" />
+                <div className="h-4 w-px bg-white/10 hidden sm:block" />
 
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
